@@ -76,16 +76,25 @@
    [:option {:value "male" :selected (= (get-value [:gender]) "male")} "Male"]
    [:option {:value "female" :selected (= (get-value [:gender]) "female")} "Female"]])
 
+(defn explanation []
+  [:p
+   [:a
+    {:href "https://en.wikipedia.org/wiki/Wilks_Coefficient"}
+    "The Wilks Formula " ]
+   "is a score used to compare the relative strengths of powerlifters
+   while adjusting for bodyweight and gender."])
+
 (defn home []
-  [:div.row
+  [:div.row.jumbotron
    [:div.col-xs-12
     [:h1 "Wilks Score Calculator"]
+    (explanation)
     [row "Gender" [gender-select]]
     [row "Weight (lbs)" [weight-input]]
     [row "Squat" [lift-input :squat]]
     [row "Bench" [lift-input :bench]]
     [row "Deadlift" [lift-input :deadlift]]
-    [row [:b "Wilks Score"] [:div (wilks-score)]]
+    [row [:b "Wilks Score"] [:b (wilks-score)]]
    ]])
 
 (defn mount-root []
