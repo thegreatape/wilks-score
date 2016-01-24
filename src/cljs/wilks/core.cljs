@@ -84,6 +84,13 @@
    "is a score used to compare the relative strengths of powerlifters
    while adjusting for bodyweight and gender."])
 
+(defn footer []
+  [:div.footer
+   [:a {:href "https://github.com/thegreatape/wilks-score"} "Source"]
+   " | "
+   "Written by Thomas Mayfield, mostly to learn a bit of "
+   [:a {:href "https://github.com/clojure/clojurescript"} "ClojureScript"]])
+
 (defn home []
   [:div.row.jumbotron
    [:div.col-xs-12
@@ -95,7 +102,7 @@
     [row "Bench" [lift-input :bench]]
     [row "Deadlift" [lift-input :deadlift]]
     [row [:b "Wilks Score"] [:b (wilks-score)]]
-   ]])
+    (footer)]])
 
 (defn mount-root []
  (r/render-component [home] (.getElementById js/document "app")))
