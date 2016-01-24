@@ -3,11 +3,11 @@
 
 (defonce state (r/atom {:lifts {}}))
 
-(defn set-value! [id value]
-  (swap! state assoc-in [:lifts id] value))
+(defn set-value! [path value]
+  (swap! state assoc-in path value))
 
-(defn get-value [id]
-  (get-in @state [:lifts id]))
+(defn get-value [path]
+  (get-in @state path))
 
 (defn total []
   (let [{:keys [:squat :deadlift :bench]} (:lifts @state)
@@ -23,14 +23,25 @@
    :e 7.01863e-06
    :f -1.291e-08 })
 
-(def weight 190)
+(def female-coefficients
+  {:a 594.31747775582
+   :b -27.23842536447
+   :c 0.82112226871
+   :d -0.00930733913
+   :e 0.00004731582
+   :f -0.00000009054})
 
 (defn lbs-to-kg [lbs]
   (* lbs 0.453592))
 
+(defn gendered-coefficients []
+  (if (= "male" (get-value [:gender]))
+    male-coefficients
+    female-coefficients))
+
 (defn wilks-coefficient []
-  (let [{:keys [:a :b :c :d :e :f]} male-coefficients
-        w (lbs-to-kg weight)]
+  (let [{:keys [:a :b :c :d :e :f]} (gendered-coefficients)
+        w (lbs-to-kg (get-value [:weight]))]
     (/ 500 (+
              a
              (* b w)
@@ -50,14 +61,27 @@
     [:span label]]
    [:div.col-md-3 body ] ])
 
+(defn bound-input [k]
+  [:input {:value (get-value k)
+           :on-change #(set-value! k (-> % .-target .-value))}])
+
 (defn lift-input [lift-key]
-  [:input {:value (get-value lift-key)
-           :on-change #(set-value! lift-key (-> % .-target .-value))}])
+  (bound-input [:lifts lift-key]))
+
+(defn weight-input []
+  (bound-input [:weight]))
+
+(defn gender-select []
+  [:select {:on-change #(set-value! [:gender] (-> % .-target .-value))}
+   [:option {:value "male" :selected (= (get-value [:gender]) "male")} "Male"]
+   [:option {:value "female" :selected (= (get-value [:gender]) "female")} "Female"]])
 
 (defn home []
   [:div.row
    [:div.col-xs-12
     [:h1 "Wilks Score Calculator"]
+    [row "Gender" [gender-select]]
+    [row "Weight (lbs)" [weight-input]]
     [row "Squat" [lift-input :squat]]
     [row "Bench" [lift-input :bench]]
     [row "Deadlift" [lift-input :deadlift]]
