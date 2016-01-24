@@ -41,7 +41,7 @@
 
 (defn wilks-coefficient []
   (let [{:keys [:a :b :c :d :e :f]} (gendered-coefficients)
-        w (lbs-to-kg (get-value [:weight]))]
+        w (lbs-to-kg (js/parseInt (get-value [:weight])))]
     (/ 500 (+
              a
              (* b w)
