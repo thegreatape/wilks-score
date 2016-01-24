@@ -1,7 +1,7 @@
 (ns wilks.core
   (:require [reagent.core :as r]))
 
-(defonce state (r/atom {:lifts {}}))
+(defonce state (r/atom {:lifts {} :gender "male"}))
 
 (defn set-value! [path value]
   (swap! state assoc-in path value))
